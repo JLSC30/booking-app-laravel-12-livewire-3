@@ -1,0 +1,42 @@
+### EMAIL SENDING QUEUE
+
+in .env
+QUEUE_CONNECTION=database
+
+php artisan queue:table
+php artisan migrate
+
+php artisan queue:monitor database
+
+apt install supervisor
+
+sudo nano /etc/supervisor/conf.d/laravel-queue-worker.conf
+
+[program:laravel-queue-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /home/jan/sites/laravel/booking-appv3/artisan queue:work database --sleep=3 --tries=3 --timeout=60
+directory=/home/jan/sites/laravel/booking-appv3
+autostart=true
+autorestart=true
+user=jan
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/home/jan/sites/laravel/booking-appv3/storage/logs/queue-worker.log
+stopwaitsecs=3600
+
+EXAMPLE
+command=php /home/jan/your-project/artisan queue:work database --sleep=3 --tries=3 --timeout=60
+directory=/home/jan/your-project
+stdout_logfile=/home/jan/your-project/storage/logs/queue-worker.log
+user=jan    ;← change to your Linux username
+numprocs=1  ;you can increase to 2-4 on stronger servers
+
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start laravel-queue-worker:*
+sudo supervisorctl status
+
+
+### Scheduled task
+crontab -e
+* * * * * cd /home/jan/sites/laravel/booking-appv3 && php artisan appointments:update-statuses >> /dev/null 2>&1

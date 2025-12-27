@@ -1,0 +1,65 @@
+name: linter
+
+on:
+  push:
+    branches:
+      - develop
+      - development
+      - main
+  pull_request:
+    branches:
+      - develop
+      - development
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    environment: Testing
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # or your preferred version
+          cache: 'npm'
+
+      - name: Add Flux Credentials Loaded From ENV
+        run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
+
+      - name: Install Dependencies
+        run: |
+          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+          npm ci  # Better than npm install in CI (clean, reproducible)
+
+      - name: Run Pint (PHP Code Style)
+        run: vendor/bin/pint
+
+      - name: Run Blade Formatter
+        run: npm run blade-format
+
+      # Optional: Show what changed (helpful for debugging)
+      - name: Show git diff (for debugging)
+        run: git diff --name-only || true
+
+      # Optional: Auto-commit formatted files
+      # Uncomment if you want automatic fixes pushed back
+      # - name: Commit Changes
+      #   uses: stefanzweifel/git-auto-commit-action@v5
+      #   with:
+      #     commit_message: "style: format PHP and Blade files"
+      #     commit_options: '--no-verify --signoff'
+      #     file_pattern: |
+      #       *.php
+      #       resources/views/**/*.blade.php
+      #       !.github/workflows/*

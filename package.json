@@ -1,0 +1,31 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "blade-format": "blade-formatter \"resources/views/**/*.blade.php\" --write"
+    },
+    "dependencies": {
+        "autoprefixer": "^10.4.20",
+        "axios": "^1.7.4",
+        "concurrently": "^9.0.1",
+        "laravel-vite-plugin": "^2.0",
+        "vite": "^7.0.4"
+    },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "4.9.5",
+        "@tailwindcss/oxide-linux-x64-gnu": "^4.0.1",
+        "lightningcss-linux-x64-gnu": "^1.29.1"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.1.18",
+        "blade-formatter": "^1.44.2",
+        "daisyui": "^5.5.14",
+        "prettier": "^3.7.4",
+        "prettier-plugin-blade": "^2.1.21",
+        "prettier-plugin-tailwindcss": "^0.7.2",
+        "tailwindcss": "^4.1.18"
+    }
+}
